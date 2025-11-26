@@ -1,4 +1,3 @@
-import random
 from ursina import Entity
 from utils import emotions
 

@@ -1,9 +1,10 @@
 import random
 from ursina import *
-from entity import obstacle
+from entity import obstacle, confetti
 from utils import emotions
 
 app = Ursina()
+Sky(texture="assets/textures/sky.jpg")
 
 # environment
 speed = 3
@@ -28,7 +29,8 @@ for i in range(obstacleCount):
   obstacles.append(obstacle.Obstacle(i, emt))
   emotionsInObstacle.append(emt)
 
-emotionsInObstacle[0] = 0 # just test
+# emotionsInObstacle[0] = 0 # just test
+emotionsInObstacle = [0, 0, 0, 0, 0] # just test
 
 player = Entity(
   model="plane",
@@ -44,21 +46,28 @@ delta = 0
 playerLv = 0
 obstacleLv = 0
 
+gameClear = False
+
 prevCollision = False
 ignoreCollision = False
 
 def update():
   global speed, friction, knockbackVelocity
-  global delta, playerLv, obstacleLv, prevCollision, ignoreCollision
+  global delta, playerLv, obstacleLv, gameClear, prevCollision, ignoreCollision
 
-  delta = time.dt * speed
+  if not gameClear:
+    delta = time.dt * speed
 
-  if knockbackVelocity != 0:
-    delta += knockbackVelocity * time.dt
-    knockbackVelocity = min(0, knockbackVelocity + friction * time.dt)
+    if knockbackVelocity != 0:
+      delta += knockbackVelocity * time.dt
+      knockbackVelocity = min(0, knockbackVelocity + friction * time.dt)
 
-  camera.z += delta
-  player.z += delta
+    camera.z += delta
+    player.z += delta
+
+  if not gameClear and obstacleLv == len(obstacles) and camera.z >= 52.:
+    gameClear = True
+    confetti.spawnConfetti(player.position, 300)
 
   hit = player.intersects()
   if hit.hit and not prevCollision and any(hit.entity == x.entity for x in obstacles):

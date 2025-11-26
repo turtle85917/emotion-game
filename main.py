@@ -11,6 +11,8 @@ speed = 3
 friction = 4
 knockbackVelocity = 0
 
+Text.default_font = "assets/fonts/MemomentKkukkukk.ttf"
+
 camera.position = (8, 7, -17)
 camera.rotation = (23, -37, 0)
 
@@ -28,9 +30,6 @@ for i in range(obstacleCount):
     emt = pickupEmt()
   obstacles.append(obstacle.Obstacle(i, emt))
   emotionsInObstacle.append(emt)
-
-# emotionsInObstacle[0] = 0 # just test
-emotionsInObstacle = [0, 0, 0, 0, 0] # just test
 
 player = Entity(
   model="plane",
@@ -51,6 +50,21 @@ gameClear = False
 prevCollision = False
 ignoreCollision = False
 
+def showClearUI():
+  Text(
+    "GAME CLEAR",
+    scale=4,
+    color=color.black,
+    origin=(0, 0),
+    position=(0, 0.2)
+  )
+  gameRestart = Button(
+    "Restart",
+    scale=(0.2, 0.1),
+    origin=(0, 0),
+    position=(0, -0.3)
+  )
+
 def update():
   global speed, friction, knockbackVelocity
   global delta, playerLv, obstacleLv, gameClear, prevCollision, ignoreCollision
@@ -68,6 +82,7 @@ def update():
   if not gameClear and obstacleLv == len(obstacles) and camera.z >= 52.:
     gameClear = True
     confetti.spawnConfetti(player.position, 300)
+    invoke(showClearUI, delay=1)
 
   hit = player.intersects()
   if hit.hit and not prevCollision and any(hit.entity == x.entity for x in obstacles):

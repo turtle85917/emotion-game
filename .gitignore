@@ -1,2 +1,6 @@
 .venv
+.cache
 __pycache__
+
+assets/ai/*
+!assets/ai/.gitkeep

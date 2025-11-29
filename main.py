@@ -1,10 +1,9 @@
 import random
 from ursina import *
-from entity import obstacle, confetti
+from entity import obstacle, confetti, video
 from utils import emotions
 
 app = Ursina()
-Sky(texture="assets/textures/sky.jpg")
 
 # environment
 speed = 3
@@ -39,6 +38,10 @@ player = Entity(
 )
 player.position = (0, 1.5, -3)
 player.rotation = (-90, 0, 0)
+
+# post process
+video.Video()
+Sky(texture="assets/textures/sky.jpg")
 
 # variable
 delta = 0

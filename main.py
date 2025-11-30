@@ -1,6 +1,7 @@
 import random
-from ursina import *
+import mediapipe # code for solving DLL error
 from entity import obstacle, confetti, video
+from ursina import *
 from utils import emotions
 
 app = Ursina()
@@ -39,7 +40,7 @@ player = Entity(
 player.position = (0, 1.5, -3)
 player.rotation = (-90, 0, 0)
 
-# post process
+# ui & post process
 video.Video()
 Sky(texture="assets/textures/sky.jpg")
 

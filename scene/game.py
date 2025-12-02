@@ -4,12 +4,41 @@ from entity import confetti, obstacle
 from utils import emotions
 
 # environment
-speed = 3
+speed = 15
 friction = 4
 
 class GameScene(Scene):
   def __init__(self):
     super().__init__("game")
+
+    # clear ui
+    self.clearUi = Entity(enabled=False, parent=camera.ui)
+    self.uiTitle = Text(
+      "축하합니다!",
+      scale=3,
+      origin=(0, 0),
+      position=(0, 0)
+    )
+    self.uiTitle.parent = self.clearUi
+    self.uiRestartButton = Button(
+      "다시 하기",
+      scale=(0.2, 0.1),
+      origin=(0, 0),
+      position=(0, -0.2)
+    )
+    self.uiRestartButton.parent = self.clearUi
+
+    self.uiSubTitles = [
+      Text("멋진 플레이", scale=1.3, origin=(0, 0), position=(-0.2, 0.08), rotation=(0, 0, -30)),
+      Text("훌룡하다!", scale=1.3, origin=(0, 0), position=(0.25, 0.06), rotation=(0, 0, 20)),
+    ]
+    destRot = [-10, 40]
+    for i in range(len(self.uiSubTitles)):
+      sub = self.uiSubTitles[i]
+      sub.parent = self.clearUi
+      sub.animate_rotation((0, 0, destRot[i]), duration=0.5, loop=True, curve=curve.sin)
+      sub.animate_scale(1.6, duration=0.5, loop=True, curve=curve.out_bounce)
+      # invoke(sub.animate_scale, 1.6, duration=0.5, loop=True, curve=curve.out_bounce, delay=1000)
 
     # entities
     camera.position = (8, 7, -17)
@@ -31,6 +60,7 @@ class GameScene(Scene):
       self.obstacles.append(obstacle.Obstacle(i, emt))
       self.emotionsInObstacle.append(emt)
       self.addChild(self.obstacles[-1].entity)
+    self.emotionsInObstacle = [0, 0, 0, 0, 0]
 
     self.player = Entity(
       model="plane",
@@ -67,7 +97,7 @@ class GameScene(Scene):
     if not self.gameClear and self.obstacleLv == len(self.obstacles) and camera.z >= 52.:
       self.gameClear = True
       confetti.spawnConfetti(self.player.position, 300)
-      # invoke(self.showClearUI, delay=1)
+      self.clearUi.enabled = True
 
     hit = self.player.intersects()
     if hit.hit and not self.prevCollision and any(hit.entity == x.entity for x in self.obstacles):

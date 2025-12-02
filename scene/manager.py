@@ -6,11 +6,15 @@ class SceneManager():
     self.currentSceneName:str|None = None
 
   def newScene(self, scene:Scene):
+    scene.manager = self
     self.scenes.append(scene)
   def changeScene(self, sceneName:str):
     newScene:Scene = list(filter(lambda x: x.tag == sceneName, self.scenes))[0]
     currScene:Scene = list(filter(lambda x: x.tag == self.currentSceneName, self.scenes))[0] if self.currentSceneName != None else None
     if currScene != None and newScene.tag == currScene.tag: return
-    if currScene != None: currScene.enabled = False
+    if currScene != None:
+      currScene.enabled = False
+      currScene.enableUI(False)
     newScene.enabled = True
+    newScene.enableUI(True)
     self.currentSceneName = newScene.tag

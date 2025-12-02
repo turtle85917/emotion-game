@@ -1,16 +1,18 @@
 from ursina import *
 from scene.manager import SceneManager
+from scene.main import MainScene
 from scene.game import GameScene
 
 app = Ursina()
 Sky(texture="assets/textures/sky.jpg")
 
+Text.default_font = "assets/fonts/MemomentKkukkukk.ttf"
+
 sceneManager = SceneManager()
+sceneManager.newScene(MainScene())
 sceneManager.newScene(GameScene())
 
-sceneManager.changeScene("game")
-
-Text.default_font = "assets/fonts/MemomentKkukkukk.ttf"
+sceneManager.changeScene("main")
 
 if __name__ == "__main__":
   app.run()

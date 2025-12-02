@@ -30,7 +30,7 @@ class GameScene(Scene):
         emt = pickupEmt()
       self.obstacles.append(obstacle.Obstacle(i, emt))
       self.emotionsInObstacle.append(emt)
-      self.addChild(self.obstacles[-1])
+      self.addChild(self.obstacles[-1].entity)
 
     self.player = Entity(
       model="plane",

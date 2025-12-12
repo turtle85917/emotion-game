@@ -1,3 +1,4 @@
+import mediapipe # code for solving DLL error
 from ursina import *
 from scene.manager import SceneManager
 from scene.main import MainScene

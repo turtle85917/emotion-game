@@ -1,18 +1,20 @@
 from ursina import *
 from scene.core import Scene
 from entity import confetti, obstacle
+from entity.video import Video
 from utils import emotions
 
 # environment
-speed = 15
+speed = 3
 friction = 4
+obstacleCount = 5
 
 class GameScene(Scene):
   def __init__(self):
     super().__init__("game")
 
     # clear ui
-    self.clearUi = Entity(enabled=False, parent=camera.ui)
+    self.clearUi = Entity(enabled=False)
     self.uiTitle = Text(
       "축하합니다!",
       scale=3,
@@ -26,19 +28,9 @@ class GameScene(Scene):
       origin=(0, 0),
       position=(0, -0.2)
     )
+    self.uiRestartButton.on_click = lambda: self._resetGame()
     self.uiRestartButton.parent = self.clearUi
-
-    self.uiSubTitles = [
-      Text("멋진 플레이", scale=1.3, origin=(0, 0), position=(-0.2, 0.08), rotation=(0, 0, -30)),
-      Text("훌룡하다!", scale=1.3, origin=(0, 0), position=(0.25, 0.06), rotation=(0, 0, 20)),
-    ]
-    destRot = [-10, 40]
-    for i in range(len(self.uiSubTitles)):
-      sub = self.uiSubTitles[i]
-      sub.parent = self.clearUi
-      sub.animate_rotation((0, 0, destRot[i]), duration=0.5, loop=True, curve=curve.sin)
-      sub.animate_scale(1.6, duration=0.5, loop=True, curve=curve.out_bounce)
-      # invoke(sub.animate_scale, 1.6, duration=0.5, loop=True, curve=curve.out_bounce, delay=1000)
+    self.addChildInUI(self.clearUi)
 
     # entities
     camera.position = (8, 7, -17)
@@ -51,7 +43,6 @@ class GameScene(Scene):
 
     self.obstacles:list[obstacle.Obstacle] = []
     self.emotionsInObstacle:list[int] = []
-    obstacleCount = 5
     for i in range(obstacleCount):
       pickupEmt = lambda: random.randint(0, len(emotions) - 1)
       emt = pickupEmt()
@@ -60,7 +51,6 @@ class GameScene(Scene):
       self.obstacles.append(obstacle.Obstacle(i, emt))
       self.emotionsInObstacle.append(emt)
       self.addChild(self.obstacles[-1].entity)
-    self.emotionsInObstacle = [0, 0, 0, 0, 0]
 
     self.player = Entity(
       model="plane",
@@ -71,6 +61,10 @@ class GameScene(Scene):
     self.player.position = (0, 1.5, -3)
     self.player.rotation = (-90, 0, 0)
     self.addChild(self.player)
+
+    self.video = Video()
+    self.video.enabled = False
+    self.addChildInUI(self.video)
 
     # variable
     self.delta = 0
@@ -83,9 +77,14 @@ class GameScene(Scene):
     self.prevCollision = False
     self.ignoreCollision = False
 
+  def onChangeScene(self):
+    self.video.enabled = True
   def update(self):
     if not self.gameClear:
       delta = time.dt * speed
+
+      self.playerLv = self.video.emotion
+      self.player.texture = f"assets/players/{emotions[self.video.emotion]}.png"
 
       if self.knockbackVelocity != 0:
         delta += self.knockbackVelocity * time.dt
@@ -111,3 +110,32 @@ class GameScene(Scene):
       self.obstacleLv += 1
       self.prevCollision = False
       self.ignoreCollision = False
+
+  def _resetGame(self):
+    camera.position = (8, 7, -17)
+    camera.rotation = (23, -37, 0)
+
+    self.player.position = (0, 1.5, -3)
+    self.player.rotation = (-90, 0, 0)
+
+    self.clearUi.enabled = False
+
+    self.emotionsInObstacle = []
+    for i in range(obstacleCount):
+      pickupEmt = lambda: random.randint(0, len(emotions) - 1)
+      emt = pickupEmt()
+      while any(emt == x for x in self.emotionsInObstacle):
+        emt = pickupEmt()
+      self.obstacles[i].updateEmotion(emt)
+      self.emotionsInObstacle.append(emt)
+
+    # variable
+    self.delta = 0
+    self.playerLv = 0
+    self.obstacleLv = 0
+    self.knockbackVelocity = 0
+
+    self.gameClear = False
+
+    self.prevCollision = False
+    self.ignoreCollision = False

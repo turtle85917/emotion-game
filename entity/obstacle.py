@@ -18,3 +18,6 @@ class Obstacle:
     self._emotionEntity.parent = self.entity
     self._emotionEntity.position = (0, 0, -0.51)
     self._emotionEntity.rotation = (-90, 0, 0)
+
+  def updateEmotion(self, emt:int):
+    self._emotionEntity.texture = f"assets/players/{emotions[emt]}"

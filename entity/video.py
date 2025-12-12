@@ -8,7 +8,6 @@ from ursina import *
 from PIL import Image
 from panda3d.core import Texture as PandaTexture
 from mediapipe.python.solutions import face_detection, face_mesh
-from utils import emotions
 
 FACEMESH_LIPS_IDX = [0, 267, 269, 270, 13, 14, 17, 402, 146, 405, 409, 415, 291, 37, 39, 40, 178, 308, 181, 310, 311, 312, 185, 314, 317, 318, 61, 191, 321, 324, 78, 80, 81, 82, 84, 87, 88, 91, 95, 375]
 FACEMESH_LEFT_EYE_IDX = [384, 385, 386, 387, 388, 390, 263, 362, 398, 466, 373, 374, 249, 380, 381, 382]
@@ -20,11 +19,11 @@ FACEMESH_NOSE_IDX = [1, 2, 4, 5, 6, 19, 275, 278, 294, 168, 45, 48, 440, 64, 195
 class Video(Entity):
   def __init__(self):
     super().__init__(
-      parent=camera.ui,
       model="quad",
       scale=(0.4, 0.3),
       origin=(-0.5, 0.5),
-      position=window.top_left + Vec2(0.03, -0.03)
+      position=window.top_left + Vec2(0.03, -0.03),
+      enabled=False
     )
 
     self._faceMesh = face_mesh.FaceMesh(
@@ -34,6 +33,8 @@ class Video(Entity):
     self._faceDetection = face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5)
     self._scaler = joblib.load("assets/ai/scaler.pkl")
     self._classficationModel = keras.models.load_model("assets/ai/emotion_classification.keras")
+
+    self.emotion = -1
 
     self.cap = cv2.VideoCapture(0)
     _, img = self.cap.read()
@@ -53,6 +54,7 @@ class Video(Entity):
 
   def _render(self):
     while True:
+      if not self.enabled: continue
       ret, img = self.cap.read()
 
       if not ret: continue
@@ -89,7 +91,7 @@ class Video(Entity):
       p = p.reshape((1, 116, 3))
       pred = self._classficationModel.predict(p, verbose=0)
       predZip = [(pred[0][i], i) for i in range(len(pred[0]))]
-      print(emotions[max(predZip)[1]], "로 예측됨!")
+      self.emotion = max(predZip)[1]
 
       time.sleep(0.03)
 

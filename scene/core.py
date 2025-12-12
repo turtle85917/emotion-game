@@ -16,4 +16,5 @@ class Scene(Entity):
   def enableUI(self, flag:bool):
     self.ui.enabled = flag
 
+  def onChangeScene(self): pass
   def update(self): pass

@@ -17,4 +17,5 @@ class SceneManager():
       currScene.enableUI(False)
     newScene.enabled = True
     newScene.enableUI(True)
+    newScene.onChangeScene()
     self.currentSceneName = newScene.tag

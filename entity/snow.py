@@ -7,7 +7,7 @@ class Snowflake(Entity):
     super().__init__(
       model="quad",
       scale=0.03,
-      texture="assets/textures/snowflake.png",
+      texture="textures/snowflake.png",
       parent=camera.ui
     )
     self.alpha = random.uniform(0.4, 0.6)
@@ -21,7 +21,7 @@ class Snowflake(Entity):
     self.loopSeq.unscaled = False
     self.loopSeq.ignore_paused = False
     self.waited = False
-    self.speical = False
+    self.special = False
 
   def update(self):
     if self.waited: return
@@ -29,7 +29,7 @@ class Snowflake(Entity):
     self.velocity.y += self.gravity * time.dt
     self.position += self.velocity * time.dt
 
-    if self.speical:
+    if self.special:
       self.rotation_z += 20 * time.dt
 
     if self.position.y <= -0.6:
@@ -42,14 +42,14 @@ class Snowflake(Entity):
     self.velocity = Vec2(random.uniform(-0.01, 0.01), 0)
     if random.randint(0, 99) == 0:
       self.scale = 0.05
-      self.speical = True
-      self.texture = "assets/textures/special snowflake.png"
+      self.special = True
+      self.texture = "textures/special snowflake.png"
       sfxManager.playEffect("special")
     else:
       self.scale = 0.03
       self.rotation.x = 0
-      self.speical = False
-      self.texture = "assets/textures/snowflake.png"
+      self.special = False
+      self.texture = "textures/snowflake.png"
 
 def spawnSnowflakes(count:int)->None:
   for _ in range(count):

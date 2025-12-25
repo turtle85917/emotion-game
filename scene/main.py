@@ -24,7 +24,7 @@ class MainScene(Scene):
     )
     self.addChildInUI(self.description)
 
-    sky = Sky(texture="assets/textures/sky.jpg")
+    sky = Sky(texture="textures/sky.jpg")
     self.addChild(sky)
 
     self.startButton = Button(

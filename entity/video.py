@@ -16,6 +16,13 @@ FACEMESH_RIGHT_EYE_IDX = [160, 33, 161, 163, 133, 7, 173, 144, 145, 246, 153, 15
 FACEMESH_RIGHT_EYEBROW_IDX = [65, 66, 70, 105, 107, 46, 52, 53, 55, 63]
 FACEMESH_NOSE_IDX = [1, 2, 4, 5, 6, 19, 275, 278, 294, 168, 45, 48, 440, 64, 195, 197, 326, 327, 344, 220, 94, 97, 98, 115]
 
+def resourcePath(rel):
+  try:
+    base = sys._MEIPASS
+  except Exception:
+    base = os.path.abspath(".")
+  return os.path.join(base, rel)
+
 class Video(Entity):
   def __init__(self):
     super().__init__(
@@ -30,8 +37,8 @@ class Video(Entity):
       min_tracking_confidence=0.5
     )
     self._faceDetection = face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5)
-    self._scaler = joblib.load("assets/ai/scaler.pkl")
-    self._classficationModel = keras.models.load_model("assets/ai/emotion_classification.keras")
+    self._scaler = joblib.load(resourcePath("assets/ai/scaler.pkl"))
+    self._classficationModel = keras.models.load_model(resourcePath("assets/ai/emotion_classification.keras"))
 
     self.emotion = -1
 

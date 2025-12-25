@@ -1,1 +1,1 @@
-emotions = ["neutral", "happy", "angry", "sad", "surprise"]
+emotions = ["angry", "happy", "neutral", "sad", "surprise"] #["neutral", "happy", "angry", "sad", "surprise"]

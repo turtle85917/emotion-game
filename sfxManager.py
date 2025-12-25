@@ -9,6 +9,7 @@ class SfxManager:
     self.effects[name] = Audio(path, self.volume, loop=False, autoplay=False)
 
   def playEffect(self, name:str):
+    if name not in self.effects.keys(): return
     self.effects[name].stop(False)
     self.effects[name].play()
 

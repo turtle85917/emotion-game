@@ -39,7 +39,7 @@ class GameScene(Scene):
     self.ground = Entity(
       model="cube",
       color=color.white,
-      texture="assets/textures/tile.png",
+      texture="textures/tile.png",
       scale=(5, 0.3, 200)
     )
     self.ground.position = (0, -0.15, 90)
@@ -68,11 +68,11 @@ class GameScene(Scene):
 
     self.player = Entity(
       model="plane",
-      texture="assets/players/neutral.png",
+      texture="players/neutral.png",
       scale=(1.5, 1, 1.5),
       collider="sphere"
     )
-    self.player.position = (0, 1.5, -3)
+    self.player.position = (0, 1.5, -10)
     self.player.rotation = (-90, 0, 0)
     self.addChild(self.player)
 
@@ -120,7 +120,7 @@ class GameScene(Scene):
       delta = time.dt * speed
 
       self.playerLv = self.video.emotion
-      self.player.texture = f"assets/players/{emotions[self.video.emotion]}.png"
+      self.player.texture = f"players/{emotions[self.video.emotion]}.png"
 
       if self.knockbackVelocity != 0:
         delta += self.knockbackVelocity * time.dt

@@ -1,9 +1,12 @@
 from scene.core import Scene
+from entity.snow import spawnSnowflakes
 
 class SceneManager():
   def __init__(self):
     self.scenes:list[Scene] = []
     self.currentSceneName:str|None = None
+
+    spawnSnowflakes(10)
 
   def newScene(self, scene:Scene):
     scene.manager = self

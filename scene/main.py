@@ -1,5 +1,6 @@
 from ursina import *
 from scene.core import Scene
+from sfxManager import sfxManager
 
 class MainScene(Scene):
   def __init__(self):
@@ -41,3 +42,4 @@ class MainScene(Scene):
 
   def _onStartButtonClick(self):
     self.manager.changeScene("game")
+    sfxManager.playEffect("start")

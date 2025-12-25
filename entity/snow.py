@@ -1,5 +1,6 @@
 import random
 from ursina import camera, Entity, sequence, time, Vec2, window
+from sfxManager import sfxManager
 
 class Snowflake(Entity):
   def __init__(self):
@@ -37,12 +38,13 @@ class Snowflake(Entity):
 
   def _initAttr(self):
     self.waited = False
-    self.position = Vec2(self.initialX, 0.6)
+    self.position = Vec2(self.initialX, 0.515)
     self.velocity = Vec2(random.uniform(-0.01, 0.01), 0)
-    if random.randint(0, 9) == 0:
+    if random.randint(0, 99) == 0:
       self.scale = 0.05
       self.speical = True
       self.texture = "assets/textures/special snowflake.png"
+      sfxManager.playEffect("special")
     else:
       self.scale = 0.03
       self.rotation.x = 0

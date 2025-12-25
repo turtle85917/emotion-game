@@ -3,6 +3,7 @@ from panda3d.core import NodePath, Camera as PandaCamera, OrthographicLens
 from scene.core import Scene
 from entity import confetti, obstacle
 from entity.video import Video
+from sfxManager import sfxManager
 from utils import emotions
 
 # environment
@@ -128,8 +129,10 @@ class GameScene(Scene):
       camera.z += delta
       self.player.z += delta
 
-    if not self.gameClear and self.obstacleLv == len(self.obstacles) and camera.z >= 52.:
+    if not self.gameClear and camera.z >= 165:
       self.gameClear = True
+      sfxManager.playEffect("clear")
+      sfxManager.playEffect("clear2")
       confetti.spawnConfetti(self.player.position, 300)
       self.clearUi.enabled = True
 
@@ -140,6 +143,7 @@ class GameScene(Scene):
         self.knockbackVelocity = knockback
         self.prevCollision = False
         self.shake(duration=0.4, magnitude=3)
+        sfxManager.playEffect("knockback")
       elif not self.ignoreCollision:
         self.ignoreCollision = True
     if not hit.hit and self.prevCollision and self.ignoreCollision:
@@ -148,6 +152,8 @@ class GameScene(Scene):
       self.ignoreCollision = False
 
   def _resetGame(self):
+    sfxManager.playEffect("click")
+
     camera.position = (9.8, 4.6, -19.7)
     camera.rotation = (6.2, -32, 0)
 

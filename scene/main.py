@@ -42,4 +42,4 @@ class MainScene(Scene):
 
   def _onStartButtonClick(self):
     self.manager.changeScene("game")
-    sfxManager.playEffect("start")
+    # sfxManager.playEffect("start")

@@ -72,7 +72,7 @@ class GameScene(Scene):
       scale=(1.5, 1, 1.5),
       collider="sphere"
     )
-    self.player.position = (0, 1.5, -10)
+    self.player.position = (0, 1.5, -8)
     self.player.rotation = (-90, 0, 0)
     self.addChild(self.player)
 

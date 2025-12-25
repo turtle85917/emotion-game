@@ -1,6 +1,7 @@
 import random
-from ursina import color, destroy, Entity, invoke, Vec3, time
-from utils import confettiGravity
+from ursina import color, destroy, Entity, Vec3, time
+
+gravity = -5
 
 class Confetti(Entity):
   def __init__(self, startPos):
@@ -25,7 +26,7 @@ class Confetti(Entity):
     )
 
   def update(self):
-    self.velocity.y += confettiGravity * time.dt
+    self.velocity.y += gravity * time.dt
     self.position += self.velocity * time.dt
     self.rotation_z += random.uniform(100, 200) * time.dt
 

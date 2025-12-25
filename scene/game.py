@@ -6,9 +6,9 @@ from entity.video import Video
 from utils import emotions
 
 # environment
-speed = 8
+speed = 12
 friction = 10
-knockback = -22
+knockback = -26
 obstacleCount = 5
 
 class GameScene(Scene):
@@ -139,6 +139,7 @@ class GameScene(Scene):
       if not self.ignoreCollision and self.playerLv != self.emotionsInObstacle[self.obstacleLv]:
         self.knockbackVelocity = knockback
         self.prevCollision = False
+        self.shake(duration=0.4, magnitude=3)
       elif not self.ignoreCollision:
         self.ignoreCollision = True
     if not hit.hit and self.prevCollision and self.ignoreCollision:

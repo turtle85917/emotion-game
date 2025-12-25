@@ -9,7 +9,7 @@ class Obstacle:
       scale=(5, 3, 0.2),
       collider="box"
     )
-    self.entity.position = (0, 1.5, index * 10 + 10)
+    self.entity.position = (0, 1.5, index * 30 + 10)
     self._emotionEntity = Entity(
       model="plane",
       texture=f"assets/players/{emotions[emt]}",

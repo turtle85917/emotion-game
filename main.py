@@ -5,7 +5,6 @@ from scene.main import MainScene
 from scene.game import GameScene
 
 app = Ursina()
-Sky(texture="assets/textures/sky.jpg")
 
 Text.default_font = "assets/fonts/MemomentKkukkukk.ttf"
 

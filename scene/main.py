@@ -23,14 +23,21 @@ class MainScene(Scene):
     )
     self.addChildInUI(self.description)
 
+    sky = Sky(texture="assets/textures/sky.jpg")
+    self.addChild(sky)
+
     self.startButton = Button(
       "게임 시작하기",
       scale=(0.2, 0.1),
       origin=(0, 0),
       position=(0, -0.3)
     )
-    self.startButton.on_click = self.onStartButtonClick
+    self.startButton.on_click = self._onStartButtonClick
     self.addChildInUI(self.startButton)
 
-  def onStartButtonClick(self):
+  def onChangeScene(self):
+    camera.rotation = (23, -37, 0)
+    camera.fov = 40
+
+  def _onStartButtonClick(self):
     self.manager.changeScene("game")

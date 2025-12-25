@@ -1,12 +1,14 @@
 from ursina import *
+from panda3d.core import NodePath, Camera as PandaCamera, OrthographicLens
 from scene.core import Scene
 from entity import confetti, obstacle
 from entity.video import Video
 from utils import emotions
 
 # environment
-speed = 3
-friction = 4
+speed = 8
+friction = 10
+knockback = -22
 obstacleCount = 5
 
 class GameScene(Scene):
@@ -33,13 +35,24 @@ class GameScene(Scene):
     self.addChildInUI(self.clearUi)
 
     # entities
-    camera.position = (8, 7, -17)
-    camera.rotation = (23, -37, 0)
-
-    self.ground = Entity(model="cube", color=color.azure, texture="assets/textures/grass.png", scale=(5, 0.3, 80))
-    self.ground.position = (0, -0.15, 30)
-    self.ground.texture_scale = (1, 10)
+    self.ground = Entity(
+      model="cube",
+      color=color.white,
+      texture="assets/textures/tile.png",
+      scale=(5, 0.3, 200)
+    )
+    self.ground.position = (0, -0.15, 90)
+    self.ground.texture_scale = (0.5, 20)
     self.addChild(self.ground)
+    groundSide = Entity(
+      model="quad",
+      color=color.rgb32 (189, 194, 207),
+      scale=(200, 0.3),
+      position=(2.51, -0.15, 90),
+      rotation=(0, 90, 0)
+    )
+    groundSide.double_sided = True
+    self.addChild(groundSide)
 
     self.obstacles:list[obstacle.Obstacle] = []
     self.emotionsInObstacle:list[int] = []
@@ -62,9 +75,29 @@ class GameScene(Scene):
     self.player.rotation = (-90, 0, 0)
     self.addChild(self.player)
 
+    # video setting
     self.video = Video()
     self.video.enabled = False
-    self.addChildInUI(self.video)
+
+    bgRegion = camera.display_region.get_window().make_display_region()
+    bgRegion.setSort(-20)
+
+    bgRender = NodePath("bg_render")
+    bgCamNode = PandaCamera("bg_camera")
+    bgLens = OrthographicLens()
+
+    bgLens.set_film_size(2 * window.aspect_ratio, 2)
+    bgLens.set_near_far(-1000, 1000)
+
+    bgCamNode.set_lens(bgLens)
+    bgCamera = bgRender.attach_new_node(bgCamNode)
+
+    bgRegion.set_camera(bgCamera)
+    bgRender.set_depth_test(False)
+    bgRender.set_depth_write(False)
+
+    self.video.reparent_to(bgCamera)
+    # end
 
     # variable
     self.delta = 0
@@ -79,6 +112,8 @@ class GameScene(Scene):
 
   def onChangeScene(self):
     self.video.enabled = True
+    camera.position = (9.8, 4.6, -19.7)
+    camera.rotation = (6.2, -32, 0)
   def update(self):
     if not self.gameClear:
       delta = time.dt * speed
@@ -102,7 +137,7 @@ class GameScene(Scene):
     if hit.hit and not self.prevCollision and any(hit.entity == x.entity for x in self.obstacles):
       self.prevCollision = True
       if not self.ignoreCollision and self.playerLv != self.emotionsInObstacle[self.obstacleLv]:
-        self.knockbackVelocity = -10
+        self.knockbackVelocity = knockback
         self.prevCollision = False
       elif not self.ignoreCollision:
         self.ignoreCollision = True
@@ -112,8 +147,8 @@ class GameScene(Scene):
       self.ignoreCollision = False
 
   def _resetGame(self):
-    camera.position = (8, 7, -17)
-    camera.rotation = (23, -37, 0)
+    camera.position = (9.8, 4.6, -19.7)
+    camera.rotation = (6.2, -32, 0)
 
     self.player.position = (0, 1.5, -3)
     self.player.rotation = (-90, 0, 0)

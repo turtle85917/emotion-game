@@ -20,10 +20,9 @@ class Video(Entity):
   def __init__(self):
     super().__init__(
       model="quad",
-      scale=(0.4, 0.3),
-      origin=(-0.5, 0.5),
-      position=window.top_left + Vec2(0.03, -0.03),
-      enabled=False
+      scale=(2 * window.aspect_ratio, 2 * window.aspect_ratio / (4 / 3)), # 4x3
+      origin=(0, 0),
+      enabled=False,
     )
 
     self._faceMesh = face_mesh.FaceMesh(

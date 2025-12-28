@@ -8,7 +8,7 @@ from ursina import *
 from PIL import Image
 from panda3d.core import Texture as PandaTexture
 from mediapipe.python.solutions import face_detection, face_mesh
-from utils import emotions
+from utils import emotions, maximumPred
 
 FACEMESH_LIPS_IDX = [0, 267, 269, 270, 13, 14, 17, 402, 146, 405, 409, 415, 291, 37, 39, 40, 178, 308, 181, 310, 311, 312, 185, 314, 317, 318, 61, 191, 321, 324, 78, 80, 81, 82, 84, 87, 88, 91, 95, 375]
 FACEMESH_LEFT_EYE_IDX = [384, 385, 386, 387, 388, 390, 263, 362, 398, 466, 373, 374, 249, 380, 381, 382]
@@ -42,21 +42,22 @@ class Video(Entity):
     self._classficationModel = keras.models.load_model(resourcePath("assets/ai/emotion_classification.keras"))
 
     self.emotion = -1
+    self.targetEmotion = -1
 
     self.cap = cv2.VideoCapture(0)
     _, img = self.cap.read()
     img = cv2.flip(img, 0)
     img = cv2.flip(img, 1)
 
-    # self.emotionPredTexts = []
-    # for i, emt in enumerate(emotions):
-    #   self.emotionPredTexts.append(Text(
-    #     text=f"{emt} 정확도 : 0.00%",
-    #     color=color.black,
-    #     scale=1,
-    #     position=(-window.aspect_ratio / 2, 0.5 - i * 0.05),
-    #     parent=camera.ui
-    #   ))
+    self.emotionPredTexts = []
+    for i, emt in enumerate(emotions):
+      self.emotionPredTexts.append(Text(
+        text=f"{emt} 정확도 : 0.00%",
+        color=color.black,
+        scale=1,
+        position=(-window.aspect_ratio / 2, 0.5 - i * 0.05),
+        parent=camera.ui
+      ))
 
     self.pandaTexture = PandaTexture()
     self.pandaTexture.setup2dTexture(
@@ -107,12 +108,23 @@ class Video(Entity):
       p = self._scaler.transform([p])[0]
       p = p.reshape((1, 116, 3))
       pred = self._classficationModel.predict(p, verbose=0)
-      predZip = [(pred[0][i], i) for i in range(len(pred[0]))]
-      # for i, (p, emt) in enumerate(predZip):
-      #   self.emotionPredTexts[i].text = f"{emotions[emt]} 정확도 : {p * 100:.2f}"
-      self.emotion = max(predZip)[1]
+      self.predZip = [(pred[0][i], i) for i in range(len(pred[0]))]
+      # self.emotion = max(self.predZip)[1]
+      # if self.emotion == 4: self.emotion = 3
+      flag:bool = False
+      for p, emt in self.predZip:
+        if emt == self.targetEmotion and p >= maximumPred[emt]:
+          self.emotion = self.targetEmotion
+          flag = True
+          break
+      if not flag:
+        self.emtoion = max(self.predZip)[1]
 
-      time.sleep(0.1)
+      time.sleep(0.03)
+  def update(self):
+    # print(self.targetEmotion, self.emotion, self.predZip)
+    for i, (p, emt) in enumerate(self.predZip):
+      self.emotionPredTexts[i].text = f"{emotions[emt]} 정확도 : {p * 100:.2f}"
 
   def _pickUpSpecificPointsInFace(self, face:any, indices:list[int])->list[tuple[int]]:
     return [(face[i].x, face[i].y, face[i].z) for i in indices]

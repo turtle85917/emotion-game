@@ -7,7 +7,7 @@ from sfxManager import sfxManager
 from utils import emotions
 
 # environment
-speed = 12
+speed = 13.5
 friction = 10
 knockback = -26
 obstacleCount = 5
@@ -21,6 +21,7 @@ class GameScene(Scene):
     self.uiTitle = Text(
       "축하합니다!",
       scale=3,
+      color=color.black,
       origin=(0, 0),
       position=(0, 0)
     )
@@ -111,11 +112,16 @@ class GameScene(Scene):
     self.prevCollision = False
     self.ignoreCollision = False
 
+    self.video.targetEmotion = self.emotionsInObstacle[0]
+
   def onChangeScene(self):
     self.video.enabled = True
     camera.position = (9.8, 4.6, -19.7)
     camera.rotation = (6.2, -32, 0)
   def update(self):
+    if held_keys["r"]:
+      self._resetGame()
+
     if not self.gameClear:
       delta = time.dt * speed
 
@@ -148,6 +154,8 @@ class GameScene(Scene):
         self.ignoreCollision = True
     if not hit.hit and self.prevCollision and self.ignoreCollision:
       self.obstacleLv += 1
+      if self.obstacleLv < len(emotions):
+        self.video.targetEmotion = self.emotionsInObstacle[self.obstacleLv]
       self.prevCollision = False
       self.ignoreCollision = False
 
@@ -181,3 +189,5 @@ class GameScene(Scene):
 
     self.prevCollision = False
     self.ignoreCollision = False
+
+    self.video.targetEmotion = self.emotionsInObstacle[self.obstacleLv]

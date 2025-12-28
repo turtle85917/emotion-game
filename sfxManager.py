@@ -3,7 +3,7 @@ from ursina import *
 class SfxManager:
   def __init__(self):
     self.effects:dict[str, Audio] = {}
-    self.volume = 0.6
+    self.volume = 0.45
 
   def newEffect(self, name:str, path:str):
     self.effects[name] = Audio(path, self.volume, loop=False, autoplay=False)

@@ -6,8 +6,6 @@ class SceneManager():
     self.scenes:list[Scene] = []
     self.currentSceneName:str|None = None
 
-    # spawnSnowflakes(10)
-
   def newScene(self, scene:Scene):
     scene.manager = self
     self.scenes.append(scene)
